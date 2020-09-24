@@ -1,0 +1,145 @@
+<html>
+    <style>
+        body{
+            margin: 0;
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        #game{
+            width: 160px;
+            height: 200px;
+            background-color: green;
+        }
+        button, .button{
+            width: 50px;
+            height: 50px;
+            margin: 2px 0px;
+            background-color: none;
+            padding: 0px 0px;
+            text-align: center;
+            font-size: 35px;
+        }
+        #newGame{
+            font-size: 12px;
+            padding: 5px 5px;
+            width: auto;
+            height: auto;
+            display: none;
+        }
+        p{
+            color: greenyellow;
+        }
+        #winner, .wins{
+            color: black;
+        }
+    </style>
+    <body>
+        <p class="wins" id="winX">Win X:0</p>
+        <p class="wins" id="winO">Win O:0</p>
+        <div id="game">
+            <p id="turn">It is turn for</p>
+            <input class="button" type="button" id="00" value=" " onclick="setValue(this)"/>
+            <input class="button" type="button" id="01" value=" " onclick="setValue(this)"/>
+            <input class="button" type="button" id="02" value=" " onclick="setValue(this)"/>
+            <br/>
+            <input class="button" type="button" id="10" value=" " onclick="setValue(this)"/>
+            <input class="button" type="button" id="11" value=" " onclick="setValue(this)"/>
+            <input class="button" type="button" id="12" value=" " onclick="setValue(this)"/>
+            <br/>
+            <input class="button" type="button" id="20" value=" " onclick="setValue(this)"/>
+            <input class="button" type="button" id="21" value=" " onclick="setValue(this)"/>
+            <input class="button" type="button" id="22" value=" " onclick="setValue(this)"/>
+            <p id="winner"></p>
+            <input class="button" type="button" id="newGame" value="New game" onclick="newGame()" />
+        </div>
+    </body>
+    <script>
+        var whoseTurn = "x";
+        var turn;
+        var x, y;
+        var sumRow = [0,0,0];
+        var sumColumn = [0,0,0];
+        var sumDiagonal = [0,0];
+        var winX=0, winO=0;
+        var countOfTurn=0;
+
+        document.getElementById("turn").innerHTML="It is turn for "+whoseTurn.toUpperCase();
+
+        function isWinner(){
+            if(sumRow.includes(3) || sumColumn.includes(3) || sumDiagonal.includes(3)){
+                return "x";
+            }else if(sumRow.includes(-3) || sumColumn.includes(-3) || sumDiagonal.includes(-3)){
+                return "o";
+            }
+            return "";
+            
+        }
+
+        function sumTurn(posX,posY,turn){
+            sumColumn[posY]+=turn;
+            sumRow[posX]+=turn;
+            if(posX==posY){
+                sumDiagonal[0]+=turn;
+            }
+            if(posX==(3-posY-1)){
+                sumDiagonal[1]+=turn;
+            }
+        }
+
+        function setValue(elem){
+            if(elem.value==" " && isWinner()==""){
+                countOfTurn++;
+                console.log(countOfTurn);
+                elem.value = whoseTurn;
+                x= parseInt(elem.id.charAt(0));
+                y= parseInt(elem.id.charAt(1));
+                if(whoseTurn=="x"){
+                    turn=1; //for x it will be 1
+                    whoseTurn="o";
+                }else{
+                    turn=-1;   //for o it will be -1
+                    whoseTurn="x";
+                }
+                sumTurn(x,y,turn);
+                var result = isWinner();
+                if(result=="x" || result=="o"){
+                    document.getElementById("winner").innerHTML="The Winner is " + result.toUpperCase();
+                    document.getElementById("turn").innerHTML="It is turn for ... ";
+                    document.getElementById("newGame").style.display="block";
+                    if(result=="x"){
+                        winX++;
+                    }else if(result=="o"){
+                        winO++;
+                    }
+                    document.getElementById("winX").innerHTML="Win X:"+winX;
+                    document.getElementById("winO").innerHTML="Win O:"+winO;
+                }else{
+                    document.getElementById("turn").innerHTML="It is turn for "+whoseTurn.toUpperCase();
+                }
+                if(countOfTurn==9){
+                    document.getElementById("newGame").style.display="block";
+                    document.getElementById("winner").innerHTML="It is a draw";
+                    document.getElementById("turn").innerHTML="It is turn for ... ";
+                }
+            }
+        }
+
+        function newGame(){
+            for(var i=0; i<3;i++){
+                for(var j=0; j<3; j++){
+                    document.getElementById(i+""+j).value=" ";
+                }
+            }
+
+            sumRow = [0,0,0];
+            sumColumn = [0,0,0];
+            sumDiagonal = [0,0];
+            countOfTurn=0;
+            document.getElementById("turn").innerHTML="It is turn for "+whoseTurn.toUpperCase();
+            document.getElementById("winner").innerHTML="";
+            document.getElementById("newGame").style.display="none";
+        }
+    </script>
+</html>
